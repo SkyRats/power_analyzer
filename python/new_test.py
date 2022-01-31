@@ -1,6 +1,6 @@
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import threading
 
 from get_data import data_points, get_data_column
@@ -23,7 +23,7 @@ def app():
     label_readings = Label(root, text=f'Empuxo {0} ---- Tensão {0} ---- Corrente {0}', height=2)
     label_readings.pack()
 
-    fig = Figure()
+    fig = plt.figure()
 
     ax = fig.add_subplot(131)
     ax.set_xlabel('Tempo (s)')

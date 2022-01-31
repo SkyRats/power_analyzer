@@ -20,38 +20,34 @@ def read_serial(file, label):
     global num_line
     num_column = 3
     ser = find_arduino()
-
-    x = ser.readline().decode('ascii')
-    serial_reading = x.split(',')
-    while serial_reading[0] != '<' or serial_reading[-1] != '>\r\n':
+    try:
         x = ser.readline().decode('ascii')
         serial_reading = x.split(',')
-    try:
+        while serial_reading[0] != '<' or serial_reading[-1] != '>\r\n':
+            x = ser.readline().decode('ascii')
+            serial_reading = x.split(',')
+
         if serial_reading[0] == '<' and serial_reading[-1] == '>\r\n':
             serial_reading.remove('<')
             serial_reading.remove('>\r\n')
 
             for i in range(1, num_column+1):
                 WorkSheet.cell(row=num_line, column=i, value=serial_reading[i-1])
-                file.write(f'{serial_reading[i-1]},')
-
                 if i == num_column:
                     num_line += 1
             Workbook.save(sheet_file)
             file.write('\n')
         else:
-            read_serial(file)
+            read_serial(file, label)
+        label.config(text=f'Empuxo: {serial_reading[0]} g ---- Tensão: {serial_reading[1]} V ---- Corrente: {serial_reading[2]} A')
+        return serial_reading
     except:
-        read_serial(file)
-
-    print(serial_reading)
-    label.config(text=f'Empuxo: {serial_reading[0]} g ---- Tensão: {serial_reading[1]} V ---- Corrente: {serial_reading[2]} A')
-    return serial_reading
+        read_serial(file, label)
 
 
 def data_points(label):
     file = open('data.txt', 'w')
-    for i in range(10):
+    for _ in range(10):
         read_serial(file, label)
     file.close()
 
